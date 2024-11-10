@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import Image from "next/image";
-import { LayoutGrid, Mic, PiggyBank, ReceiptText } from 'lucide-react'
+import { LayoutGrid, Mic, PiggyBank, ReceiptText, Download } from 'lucide-react'
 import {UserButton} from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -32,7 +32,13 @@ function SideNav() {
             name:"Asistente de voz",
             icon:Mic,
             path: "/dashboard/asistente"
-        }
+        },
+        {
+            id:4,
+            name:"Recibos",
+            icon:Download,
+            path: "/dashboard/receipts"
+        } 
         
     ]
     
