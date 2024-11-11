@@ -1,7 +1,7 @@
 "use client";
-import React from 'react'
+import React from 'react';
 import Image from "next/image";
-import { LayoutGrid, Mic, PiggyBank, ReceiptText, Download } from 'lucide-react'
+import { LayoutGrid, Mic, PiggyBank, ReceiptText, Download } from 'lucide-react';
 import { UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -39,7 +39,7 @@ function SideNav() {
             icon: Download,
             path: "/dashboard/receipts"
         }
-    ]
+    ];
 
     const path = usePathname();
 
@@ -60,12 +60,17 @@ function SideNav() {
                 {menuList.map((menu) => (
                     <Link href={menu.path} key={menu.id}>
                         <h2
-                            className={`group flex gap-2 items-center text-white font-medium p-5 cursor-pointer rounded-md 
-                    hover:text-[#8B17FF] hover:bg-[#FFE686]/80 
-                    ${path === menu.path ? "text-[#8B17FF] bg-[#FFE686]/80" : ""}`}
+                            className={`group flex gap-2 items-center font-medium p-5 cursor-pointer rounded-md 
+                    ${path === menu.path ? "text-[#8B17FF] bg-[#FFE686]/80" : "text-white"} 
+                    hover:text-[#8B17FF] hover:bg-[#FFE686]/80`}
                         >
-                            <menu.icon className={`text-white group-hover:text-[#8B17FF] ${path === menu.path ? "text-[#8B17FF]" : ""}`} />
-                            <span className="group-hover:text-[#8B17FF]">{menu.name}</span>
+                            <menu.icon
+                                className={`group-hover:text-[#8B17FF] 
+                                ${path === menu.path ? "text-[#8B17FF]" : "text-white"}`}
+                            />
+                            <span className={`${path === menu.path ? "text-[#8B17FF]" : ""}`}>
+                                {menu.name}
+                            </span>
                         </h2>
                     </Link>
                 ))}
@@ -75,7 +80,7 @@ function SideNav() {
                 Perfil
             </div>
         </div>
-    )
+    );
 }
 
-export default SideNav
+export default SideNav;
