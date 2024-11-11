@@ -12,18 +12,6 @@ export default function Page() {
           />
 
           <div className="hidden lg:relative lg:block lg:p-12">
-            <a
-              className="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
-              href="#"
-            >
-              <span className="sr-only">Inicio</span>
-              <img
-                src="/path/to/Logo Financial.lly color.svg" // Asegúrate de que la ruta sea correcta
-                alt="Logo Financial.lly color"
-                className="h-8 sm:h-10"
-              />
-            </a>
-
             <h2 className="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
               Bienvenid@ a Financial.lly
             </h2>
@@ -39,18 +27,6 @@ export default function Page() {
         >
           <div className="max-w-xl lg:max-w-3xl">
             <div className="relative -mt-16 block lg:hidden">
-              <a
-                className="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
-                href="#"
-              >
-                <span className="sr-only">Inicio</span>
-                <img
-                  src="/path/to/Logo Financial.lly color.svg" // Asegúrate de que la ruta sea correcta
-                  alt="Logo Financial.lly color"
-                  className="h-8 sm:h-10"
-                />
-              </a>
-
               <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
                 Bienvenid@ a Financial.lly
               </h1>
