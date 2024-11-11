@@ -19,7 +19,7 @@ function Hero() {
           </h1>
 
           <p className="mt-4 sm:text-xl/relaxed">
-            Empieza a crear tu presupuesto y ahorra mucho dinero
+            Empieza a crear tu presupuesto y ahorra dinero
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">

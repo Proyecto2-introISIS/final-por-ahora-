@@ -16,13 +16,13 @@ function App_microfono() {
   // Verificar si el navegador soporta el reconocimiento de voz
   if (!isClient) return null; // Evita el renderizado en SSR
   if (!browserSupportsSpeechRecognition) {
-    return <span>El navegador no soporta el reconocimiento de voz.</span>;
+    return <span>Tu navegador no soporta el reconocimiento de voz.</span>;
   }
 
   return (
     <div className="mt-8 flex flex-wrap justify-center gap-4">
       {listening ? (
-        <p> Habla, estoy escuchando 🦻 </p>
+        <p> Puedes hablar, estoy escuchando 🦻 </p>
       ) : ( 
         <p> Dale click al botón y dime qué hacer</p>
       )}
