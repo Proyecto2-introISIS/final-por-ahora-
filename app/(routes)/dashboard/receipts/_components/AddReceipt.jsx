@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 
-function AddReceipt({ refreshData }) { // Recibe refreshData como prop
+function AddReceipt({ refreshData }) { 
   const [receiptName, setReceiptName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const { user } = useUser();
@@ -39,7 +39,7 @@ function AddReceipt({ refreshData }) { // Recibe refreshData como prop
           toast("Factura subida exitosamente");
           setSelectedFile(null);
           setReceiptName('');
-          if (refreshData) refreshData(); // Llama a refreshData aquí
+          if (refreshData) refreshData(); 
         } else {
           toast("Error al subir la factura");
         }

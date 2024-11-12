@@ -8,7 +8,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogClose } from "@/components/
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 
-function ReceiptGallery({ refresh }) { // Recibe refresh como prop
+function ReceiptGallery({ refresh }) { 
   const [receipts, setReceipts] = useState([]);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const { user } = useUser();
@@ -35,7 +35,7 @@ function ReceiptGallery({ refresh }) { // Recibe refresh como prop
 
   useEffect(() => {
     if (user) getReceipts();
-  }, [user, refresh]); // Dependencia de refresh para actualizar la galería
+  }, [user, refresh]); 
 
   return (
     <div className="mt-7">
