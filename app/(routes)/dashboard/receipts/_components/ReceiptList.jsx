@@ -1,14 +1,22 @@
-import React from 'react';
+"use client"
+
+import React, { useState } from 'react';
 import AddReceipt from './AddReceipt';
-import ReceiptGallery from './ReceiptGallery'; // Importa el componente de la galería
+import ReceiptGallery from './ReceiptGallery';
 
 function ReceiptList() {
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshData = () => {
+    setRefresh((prev) => !prev); // Cambiar el estado para forzar la actualización
+  };
+
   return (
     <div className="mt-7">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <AddReceipt />
+        <AddReceipt refreshData={refreshData} /> {/* Pasar refreshData */}
       </div>
-      <ReceiptGallery /> {/* Llama a ReceiptGallery debajo de AddReceipt */}
+      <ReceiptGallery refresh={refresh} /> {/* Pasar refresh */}
     </div>
   );
 }

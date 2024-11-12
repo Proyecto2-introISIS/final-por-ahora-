@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 
-function AddReceipt({ refreshData }) {
+function AddReceipt({ refreshData }) { // Recibe refreshData como prop
   const [receiptName, setReceiptName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const { user } = useUser();
@@ -39,7 +39,7 @@ function AddReceipt({ refreshData }) {
           toast("Factura subida exitosamente");
           setSelectedFile(null);
           setReceiptName('');
-          if (refreshData) refreshData();
+          if (refreshData) refreshData(); // Llama a refreshData aquí
         } else {
           toast("Error al subir la factura");
         }
@@ -54,9 +54,9 @@ function AddReceipt({ refreshData }) {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div className="bg-slate-100 p-10 rounded-md items-center flex flex-col border-2 border-dashed cursor-pointer hover:shadow-md w-20">
-            <h2 className="text-3xl">+</h2>
-            <h2>Agregar Factura</h2>
+          <div className="bg-purple-700 p-5 rounded-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg w-full md:w-40 h-20 text-center text-white">
+            <h2 className="text-4xl font-bold">+</h2>
+            <h2 className="text-md mt-2">Agregar Factura</h2>
           </div>
         </DialogTrigger>
         <DialogContent>

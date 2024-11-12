@@ -4,9 +4,13 @@ import { db } from '@/utils/dbConfig';
 import { eq, desc } from 'drizzle-orm';
 import { Receipts } from '@/utils/schema';
 import { useUser } from "@clerk/nextjs";
+import { Dialog, DialogTrigger, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from 'sonner';
 
-function ReceiptGallery() {
+function ReceiptGallery({ refresh }) { // Recibe refresh como prop
   const [receipts, setReceipts] = useState([]);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
   const { user } = useUser();
 
   const getReceipts = async () => {
@@ -23,23 +27,53 @@ function ReceiptGallery() {
     setReceipts(result);
   };
 
+  const deleteReceipt = async (receiptId) => {
+    await db.delete(Receipts).where(eq(Receipts.id, receiptId));
+    setReceipts((prevReceipts) => prevReceipts.filter((receipt) => receipt.id !== receiptId));
+    toast("Factura eliminada exitosamente");
+  };
+
   useEffect(() => {
     if (user) getReceipts();
-  }, [user]);
+  }, [user, refresh]); // Dependencia de refresh para actualizar la galería
 
   return (
     <div className="mt-7">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {receipts?.length > 0 ? (
-          receipts.map((receipt, index) => (
-            <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
-              <img src={receipt.imageUrl} alt={receipt.name} className="w-full h-48 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{receipt.name}</h3>
-                <p className="text-sm text-gray-500">
-                  Cargado el {new Date(receipt.uploadedAt).toLocaleDateString()}
-                </p>
-              </div>
+          receipts.map((receipt) => (
+            <div key={receipt.id} className="bg-white shadow-md rounded-lg overflow-hidden">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <img 
+                    src={receipt.imageUrl} 
+                    alt={receipt.name} 
+                    className="w-full h-48 object-cover cursor-pointer" 
+                    onClick={() => setSelectedReceipt(receipt)}
+                  />
+                </DialogTrigger>
+                <DialogContent>
+                  <div className="flex flex-col items-center">
+                    <img src={receipt.imageUrl} alt={receipt.name} className="w-full max-h-[500px] object-cover mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">{receipt.name}</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Cargado el {new Date(receipt.uploadedAt).toLocaleDateString()}
+                    </p>
+                    <Button 
+                      variant="destructive" 
+                      onClick={() => {
+                        deleteReceipt(receipt.id);
+                        setSelectedReceipt(null);
+                      }}
+                    >
+                      Eliminar Factura
+                    </Button>
+                  </div>
+                  <DialogClose asChild>
+                    <Button variant="secondary" className="mt-4">Cerrar</Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
             </div>
           ))
         ) : (
