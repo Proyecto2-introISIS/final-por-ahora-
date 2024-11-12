@@ -54,7 +54,7 @@ function AddReceipt({ refreshData }) {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div className="bg-purple-700 p-5 rounded-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg w-full md:w-40 h-20 text-center text-white">
+          <div className="bg-[#8B17FF] p-5 rounded-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg w-full md:w-40 h-20 text-center text-white">
             <h2 className="text-4xl font-bold">+</h2>
             <h2 className="text-md mt-2">Agregar Factura</h2>
           </div>
@@ -90,7 +90,7 @@ function AddReceipt({ refreshData }) {
             <Button
               onClick={handleUpload}
               disabled={!(selectedFile && receiptName)}
-              className="mt-3 w-full"
+              className="mt-3 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
             >
               Subir
             </Button>

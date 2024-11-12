@@ -10,9 +10,9 @@ function VoiceBudget() {
         <div className="mx-auto max-w-xl text-center">
           <h1 className="text-3xl font-extrabold sm:text-5xl">
             ¡Prueba nuestro asistente de voz!
-            <strong className="font-extrabold text-primary sm:block"> Haz todo más sencillo </strong>
+            <strong className="font-extrabold text-[#8B17FF] sm:block"> Haz todo más sencillo </strong>
           </h1>
-          <p className="mt-4 sm:text-xl/relaxed">
+          <p className="mt-4 sm:text-xl/relaxed text-[#8B17FF]">
             Dale indicaciones con tu voz, él puede crear gastos y presupuestos, ¡solo díselo!
           </p>
           <Image 
@@ -20,7 +20,7 @@ function VoiceBudget() {
             alt="cdd" 
             width={1000} 
             height={700} 
-            className="mt-5 rounded-xl border-2" 
+            className="mt-5 rounded-xl border-2 border-[#8B17FF]" 
           />
           <App_microfono />
         </div>

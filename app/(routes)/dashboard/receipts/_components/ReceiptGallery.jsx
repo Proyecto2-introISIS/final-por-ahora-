@@ -42,7 +42,7 @@ function ReceiptGallery({ refresh }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {receipts?.length > 0 ? (
           receipts.map((receipt) => (
-            <div key={receipt.id} className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div key={receipt.id} className="bg-[#FFF7CE] shadow-md rounded-lg overflow-hidden">
               <Dialog>
                 <DialogTrigger asChild>
                   <img 
@@ -65,6 +65,7 @@ function ReceiptGallery({ refresh }) {
                         deleteReceipt(receipt.id);
                         setSelectedReceipt(null);
                       }}
+                      className="bg-[#8B17FF] text-white hover:bg-[#FFC217]"
                     >
                       Eliminar Factura
                     </Button>

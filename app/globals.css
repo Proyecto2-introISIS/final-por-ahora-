@@ -2,8 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importar las fuentes */
+@font-face {
+  font-family: 'Ebrima';
+  src: url('/fonts/ebrima.woff') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ebrima-Bold';
+  src: url('/fonts/ebrima-bold.woff') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Ebrima', Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {

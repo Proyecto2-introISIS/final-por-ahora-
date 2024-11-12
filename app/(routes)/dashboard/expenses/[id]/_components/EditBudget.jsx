@@ -4,7 +4,6 @@ import { PenBox } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 
-
 import {
   Dialog,
   DialogClose,
@@ -22,22 +21,20 @@ import { eq } from "drizzle-orm";
 import { toast } from "sonner";
 import { db } from "@/utils/dbConfig";
 
-function EditBudget({ budgetInfo, refreshData}){
+function EditBudget({ budgetInfo, refreshData }) {
   const [emojiIcon, setEmojiIcon] = useState(budgetInfo?.icon); // Emoji predeterminado
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [name, setName] = useState();
   const [amount, setAmount] = useState();
   const { user } = useUser();
 
-  useEffect(()=>{
-    if(budgetInfo)
-    {
-        setEmojiIcon(budgetInfo?.icon)
-        setAmount(budgetInfo.amount);
-        setName(budgetInfo.name)
+  useEffect(() => {
+    if (budgetInfo) {
+      setEmojiIcon(budgetInfo?.icon);
+      setAmount(budgetInfo.amount);
+      setName(budgetInfo.name);
     }
-    
-  },[budgetInfo]);
+  }, [budgetInfo]);
 
   const onUpdateBudget = async () => {
     const result = await db
@@ -51,7 +48,7 @@ function EditBudget({ budgetInfo, refreshData}){
       .returning();
 
     if (result) {
-        refreshData()
+      refreshData();
       toast("Presupuesto actualizado");
     }
   };
@@ -60,7 +57,7 @@ function EditBudget({ budgetInfo, refreshData}){
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="flex gap-2">
+          <Button className="flex gap-2 bg-[#8B17FF] text-white hover:bg-[#FFC217]">
             <PenBox />
             Editar
           </Button>
@@ -104,7 +101,7 @@ function EditBudget({ budgetInfo, refreshData}){
                   <Input
                     type="number"
                     defaultValue={budgetInfo?.amount}
-                    placeholder="Ejemplo: 5000000 pesos"
+                    placeholder="Ejemplo: 5,000,000 pesos"
                     onChange={(e) => setAmount(e.target.value)}
                   />
                 </div>
@@ -116,7 +113,7 @@ function EditBudget({ budgetInfo, refreshData}){
               <Button
                 disabled={!(name && amount)}
                 onClick={onUpdateBudget}
-                className="mt-5 w-full"
+                className="mt-5 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
               >
                 Actualizar presupuesto
               </Button>
