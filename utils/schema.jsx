@@ -1,5 +1,5 @@
 //import { serial, varchar } from "drizzle-orm/mysql-core";
-import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, varchar, timestamp, text } from "drizzle-orm/pg-core";
 
 export const Budgets = pgTable("budgets", {
     id: serial("id").primaryKey(), // Changed from primary.Key() to primaryKey()
@@ -16,4 +16,13 @@ export const Expenses=pgTable("expenses",{
     budgetId: integer("budgetId").references(()=>Budgets.id),
     createdAt:varchar("createdAt").notNull()
 
-})
+});
+
+
+export const Receipts = pgTable("receipts", {
+    id: serial("id").primaryKey(), // Identificador único de cada factura
+    name: varchar("name", { length: 255 }).notNull(), // Nombre de la factura
+    image_url: text("image_url").notNull(), // URL o base64 de la imagen
+    user_id: text("user_id").notNull(), // Cambiado a varchar para el ID de usuario
+    uploaded_at: timestamp("uploaded_at").defaultNow().notNull() // Fecha de carga
+});
