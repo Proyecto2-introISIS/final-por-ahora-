@@ -54,9 +54,9 @@ function AddReceipt({ refreshData }) {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div className="bg-[#8B17FF] p-5 rounded-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg w-full md:w-40 h-20 text-center text-white">
-            <h2 className="text-4xl font-bold">+</h2>
-            <h2 className="text-md mt-2">Agregar Factura</h2>
+          <div className="bg-[#824cff] p-10 rounded-md items-center flex flex-col border-2 border-dashed cursor-pointer hover:shadow-md">
+            <h2 className="text-3xl text-white">+</h2>
+            <h2 className="text-white">Agregar Factura</h2>
           </div>
         </DialogTrigger>
         <DialogContent>
