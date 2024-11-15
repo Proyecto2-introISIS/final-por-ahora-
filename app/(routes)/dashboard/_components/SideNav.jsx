@@ -50,7 +50,7 @@ function SideNav() {
     }, [path]);
 
     return (
-        <div className="h-screen p-5 shadow-sm bg-[#8B17FF]">
+        <div className="h-screen p-5 shadow-sm bg-[#17ff8b]">
             <Image src={"/Logo Financial.lly color.svg"}
                 alt="logo3"
                 width={120}
