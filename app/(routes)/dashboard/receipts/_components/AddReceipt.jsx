@@ -19,11 +19,13 @@ import { useUser } from '@clerk/nextjs';
 
 function AddReceipt({ refreshData }) { 
   const [receiptName, setReceiptName] = useState('');
+  const [amount, setAmount] = useState('');
+  const [budgetSource, setBudgetSource] = useState('');  // Nuevo estado para el presupuesto
   const [selectedFile, setSelectedFile] = useState(null);
   const { user } = useUser();
 
   const handleUpload = async () => {
-    if (selectedFile && receiptName) {
+    if (selectedFile && receiptName && amount && budgetSource) {  // Validar también `budgetSource`
       const reader = new FileReader();
       reader.onload = async (e) => {
         const dataUrl = e.target.result;
@@ -31,6 +33,8 @@ function AddReceipt({ refreshData }) {
         const result = await db.insert(Receipts).values({
           name: receiptName,
           image_url: dataUrl,
+          amount: parseFloat(amount),
+          budget_source: budgetSource,  // Guardar `budgetSource`
           user_id: user?.primaryEmailAddress?.emailAddress,
           uploaded_at: new Date(),
         }).returning();
@@ -39,6 +43,8 @@ function AddReceipt({ refreshData }) {
           toast("Factura subida exitosamente");
           setSelectedFile(null);
           setReceiptName('');
+          setAmount('');
+          setBudgetSource('');  // Restablecer `budgetSource`
           if (refreshData) refreshData(); 
         } else {
           toast("Error al subir la factura");
@@ -46,7 +52,7 @@ function AddReceipt({ refreshData }) {
       };
       reader.readAsDataURL(selectedFile);
     } else {
-      toast("Debe ingresar un nombre y seleccionar un archivo");
+      toast("Debe ingresar un nombre, archivo, gasto total y presupuesto de origen");
     }
   };
 
@@ -73,6 +79,25 @@ function AddReceipt({ refreshData }) {
                   />
                 </div>
                 <div className="mt-2">
+                  <h2 className="text-black font-medium my-1">Gasto total de la factura</h2>
+                  <Input 
+                    placeholder="Ejemplo: 15000" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)} 
+                    type="number" 
+                    step="0.01" 
+                    min="0"
+                  />
+                </div>
+                <div className="mt-2">
+                  <h2 className="text-black font-medium my-1">Presupuesto de origen</h2>
+                  <Input 
+                    placeholder="Ejemplo: Presupuesto de oficina" 
+                    value={budgetSource}
+                    onChange={(e) => setBudgetSource(e.target.value)} 
+                  />
+                </div>
+                <div className="mt-2">
                   <h2 className="text-black font-medium my-1">Selecciona el archivo</h2>
                   <input
                     type="file"
@@ -89,7 +114,7 @@ function AddReceipt({ refreshData }) {
             </DialogClose>
             <Button
               onClick={handleUpload}
-              disabled={!(selectedFile && receiptName)}
+              disabled={!(selectedFile && receiptName && amount && budgetSource)}  // Asegurarse de que `budgetSource` esté presente
               className="mt-3 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
             >
               Subir

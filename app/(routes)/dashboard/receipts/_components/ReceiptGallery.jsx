@@ -18,6 +18,8 @@ function ReceiptGallery({ refresh }) {
       id: Receipts.id,
       name: Receipts.name,
       imageUrl: Receipts.image_url,
+      amount: Receipts.amount,
+      budgetSource: Receipts.budget_source,  // Selecciona la columna budget_source
       uploadedAt: Receipts.uploaded_at
     })
     .from(Receipts)
@@ -56,6 +58,16 @@ function ReceiptGallery({ refresh }) {
                   <div className="flex flex-col items-center">
                     <img src={receipt.imageUrl} alt={receipt.name} className="w-full max-h-[500px] object-cover mb-4" />
                     <h3 className="text-lg font-semibold mb-2">{receipt.name}</h3>
+                    {receipt.amount !== undefined && (
+                      <p className="text-lg font-medium text-gray-700 mb-2">
+                        Gasto Total: ${parseFloat(receipt.amount || 0).toFixed(2)}
+                      </p>
+                    )}
+                    {receipt.budgetSource && (
+                      <p className="text-lg font-medium text-gray-700 mb-2">
+                        Presupuesto: {receipt.budgetSource}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-500 mb-4">
                       Cargado el {new Date(receipt.uploadedAt).toLocaleDateString()}
                     </p>
