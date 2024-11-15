@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -11,7 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { db } from '@/utils/dbConfig';
-import { Receipts } from '@/utils/schema';
+import { Budgets, Receipts, Expenses } from '@/utils/schema';
+import { eq } from 'drizzle-orm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -19,13 +20,31 @@ import { useUser } from '@clerk/nextjs';
 
 function AddReceipt({ refreshData }) { 
   const [receiptName, setReceiptName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [budgetSource, setBudgetSource] = useState('');  // Nuevo estado para el presupuesto
   const [selectedFile, setSelectedFile] = useState(null);
+  const [budgetId, setBudgetId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [budgets, setBudgets] = useState([]);
   const { user } = useUser();
 
+  useEffect(() => {
+    const fetchBudgets = async () => {
+      if (user) {
+        const result = await db.select({
+          id: Budgets.id,
+          name: Budgets.name,
+          amount: Budgets.amount,
+        })
+        .from(Budgets)
+        .where(eq(Budgets.createdBy, user.primaryEmailAddress?.emailAddress));
+        setBudgets(result);
+      }
+    };
+
+    fetchBudgets();
+  }, [user]);
+
   const handleUpload = async () => {
-    if (selectedFile && receiptName && amount && budgetSource) {  // Validar también `budgetSource`
+    if (selectedFile && receiptName && budgetId && amount) {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const dataUrl = e.target.result;
@@ -33,26 +52,50 @@ function AddReceipt({ refreshData }) {
         const result = await db.insert(Receipts).values({
           name: receiptName,
           image_url: dataUrl,
+          budget_id: budgetId,
           amount: parseFloat(amount),
-          budget_source: budgetSource,  // Guardar `budgetSource`
           user_id: user?.primaryEmailAddress?.emailAddress,
           uploaded_at: new Date(),
         }).returning();
 
         if (result) {
-          toast("Factura subida exitosamente");
-          setSelectedFile(null);
-          setReceiptName('');
-          setAmount('');
-          setBudgetSource('');  // Restablecer `budgetSource`
-          if (refreshData) refreshData(); 
+          // Restar el gasto total del presupuesto
+          const budget = budgets.find(b => b.id === parseInt(budgetId));
+          if (budget) {
+            const newAmount = budget.amount - parseFloat(amount);
+
+            await db.update(Budgets)
+              .set({ amount: newAmount })
+              .where(eq(Budgets.id, budgetId))
+              .returning();
+
+            // Crear un gasto en la base de datos de gastos
+            if (parseFloat(amount) > 0) {
+              await db.insert(Expenses).values({
+                name: receiptName,
+                amount: parseFloat(amount),
+                budgetId: budgetId,
+                createdAt: new Date(),
+              }).returning();
+            }
+
+            toast("Factura subida exitosamente");
+            toast("Presupuesto editado exitosamente");
+            setSelectedFile(null);
+            setReceiptName('');
+            setBudgetId('');
+            setAmount('');
+            if (refreshData) refreshData(); 
+          } else {
+            toast("Presupuesto no encontrado");
+          }
         } else {
           toast("Error al subir la factura");
         }
       };
       reader.readAsDataURL(selectedFile);
     } else {
-      toast("Debe ingresar un nombre, archivo, gasto total y presupuesto de origen");
+      toast("Debe ingresar un nombre, seleccionar un archivo, un presupuesto y el monto total");
     }
   };
 
@@ -79,22 +122,26 @@ function AddReceipt({ refreshData }) {
                   />
                 </div>
                 <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">Gasto total de la factura</h2>
-                  <Input 
-                    placeholder="Ejemplo: 15000" 
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)} 
-                    type="number" 
-                    step="0.01" 
-                    min="0"
-                  />
+                  <h2 className="text-black font-medium my-1">Presupuesto de origen</h2>
+                  <select
+                    value={budgetId}
+                    onChange={(e) => setBudgetId(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                  >
+                    <option value="">Seleccione un presupuesto</option>
+                    {budgets.map((budget) => (
+                      <option key={budget.id} value={budget.id}>
+                        {budget.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mt-2">
-                  <h2 className="text-black font-medium my-1">Presupuesto de origen</h2>
+                  <h2 className="text-black font-medium my-1">Monto total</h2>
                   <Input 
-                    placeholder="Ejemplo: Presupuesto de oficina" 
-                    value={budgetSource}
-                    onChange={(e) => setBudgetSource(e.target.value)} 
+                    placeholder="Ejemplo: 50000" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)} 
                   />
                 </div>
                 <div className="mt-2">
@@ -114,7 +161,7 @@ function AddReceipt({ refreshData }) {
             </DialogClose>
             <Button
               onClick={handleUpload}
-              disabled={!(selectedFile && receiptName && amount && budgetSource)}  // Asegurarse de que `budgetSource` esté presente
+              disabled={!(selectedFile && receiptName && budgetId && amount)}
               className="mt-3 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
             >
               Subir
