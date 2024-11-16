@@ -59,7 +59,6 @@ function AddReceipt({ refreshData }) {
         }).returning();
 
         if (result) {
-          // Restar el gasto total del presupuesto
           const budget = budgets.find(b => b.id === parseInt(budgetId));
           if (budget) {
             const newAmount = budget.amount - parseFloat(amount);
@@ -69,13 +68,16 @@ function AddReceipt({ refreshData }) {
               .where(eq(Budgets.id, budgetId))
               .returning();
 
-            // Crear un gasto en la base de datos de gastos
+            // Crear un gasto en la base de datos de gastos con formato de fecha DD-MM-YYYY
             if (parseFloat(amount) > 0) {
+              const today = new Date();
+              const createdAt = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`;
+
               await db.insert(Expenses).values({
                 name: receiptName,
                 amount: parseFloat(amount),
                 budgetId: budgetId,
-                createdAt: new Date(),
+                createdAt: createdAt,
               }).returning();
             }
 
