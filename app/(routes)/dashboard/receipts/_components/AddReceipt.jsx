@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 
-
 function AddReceipt({ refreshData }) { 
   const [receiptName, setReceiptName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -50,6 +49,7 @@ function AddReceipt({ refreshData }) {
       reader.onload = async (e) => {
         const dataUrl = e.target.result;
 
+        // Guardar la factura en Receipts
         const result = await db.insert(Receipts).values({
           name: receiptName,
           image_url: dataUrl,
@@ -60,38 +60,24 @@ function AddReceipt({ refreshData }) {
         }).returning();
 
         if (result) {
-          const budget = budgets.find(b => b.id === parseInt(budgetId));
-          if (budget) {
-            const newAmount = budget.amount - parseFloat(amount);
+          // Crear el gasto en Expenses sin modificar el presupuesto
+          if (parseFloat(amount) > 0) {
+            const createdAt = new Date().toLocaleDateString("es-ES");
 
-            await db.update(Budgets)
-              .set({ amount: newAmount })
-              .where(eq(Budgets.id, budgetId))
-              .returning();
-
-            
-            if (parseFloat(amount) > 0) {
-              const today = new Date();
-              const createdAt = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-
-              await db.insert(Expenses).values({
-                name: receiptName,
-                amount: parseFloat(amount),
-                budgetId: budgetId,
-                createdAt: createdAt,
-              }).returning();
-            }
-
-            toast("Factura subida exitosamente");
-            toast("Presupuesto editado exitosamente");
-            setSelectedFile(null);
-            setReceiptName('');
-            setBudgetId('');
-            setAmount('');
-            if (refreshData) refreshData(); 
-          } else {
-            toast("Presupuesto no encontrado");
+            await db.insert(Expenses).values({
+              name: receiptName,
+              amount: parseFloat(amount),
+              budgetId: budgetId,
+              createdAt: createdAt,
+            }).returning();
           }
+
+          toast("Factura subida exitosamente");
+          setSelectedFile(null);
+          setReceiptName('');
+          setBudgetId('');
+          setAmount('');
+          if (refreshData) refreshData(); 
         } else {
           toast("Error al subir la factura");
         }
