@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 
-//... (el resto de los imports y configuración se mantienen)
 
 function AddReceipt({ refreshData }) { 
   const [receiptName, setReceiptName] = useState('');
@@ -70,7 +69,7 @@ function AddReceipt({ refreshData }) {
               .where(eq(Budgets.id, budgetId))
               .returning();
 
-            // Crear un gasto en la base de datos de gastos con formato de fecha DD/MM/YYYY
+            
             if (parseFloat(amount) > 0) {
               const today = new Date();
               const createdAt = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;

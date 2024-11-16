@@ -20,11 +20,11 @@ export const Expenses=pgTable("expenses",{
 
 
 export const Receipts = pgTable("receipts", {
-    id: serial("id").primaryKey(), // Identificador único de cada factura
-    name: varchar("name", { length: 255 }).notNull(), // Nombre de la factura
-    image_url: text("image_url").notNull(), // URL o base64 de la imagen
-    user_id: text("user_id").notNull(), // Cambiado a varchar para el ID de usuario
+    id: serial("id").primaryKey(), 
+    name: varchar("name", { length: 255 }).notNull(), 
+    image_url: text("image_url").notNull(), 
+    user_id: text("user_id").notNull(), 
     amount: numeric("amount"),
     budget_source: varchar("budget_source"),
-    uploaded_at: timestamp("uploaded_at").defaultNow().notNull() // Fecha de carga
+    uploaded_at: timestamp("uploaded_at").defaultNow().notNull() 
 });

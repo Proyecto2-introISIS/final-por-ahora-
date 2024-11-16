@@ -19,7 +19,7 @@ function ReceiptGallery({ refresh }) {
       name: Receipts.name,
       imageUrl: Receipts.image_url,
       amount: Receipts.amount,
-      budgetSource: Receipts.budget_source,  // Selecciona la columna budget_source
+      budgetSource: Receipts.budget_source,  
       uploadedAt: Receipts.uploaded_at
     })
     .from(Receipts)
