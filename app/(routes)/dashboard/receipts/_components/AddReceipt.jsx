@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -49,7 +48,6 @@ function AddReceipt({ refreshData }) {
       reader.onload = async (e) => {
         const dataUrl = e.target.result;
 
-        // Guardar la factura en Receipts
         const result = await db.insert(Receipts).values({
           name: receiptName,
           image_url: dataUrl,
@@ -60,7 +58,6 @@ function AddReceipt({ refreshData }) {
         }).returning();
 
         if (result) {
-          // Crear el gasto en Expenses sin modificar el presupuesto
           if (parseFloat(amount) > 0) {
             const createdAt = new Date().toLocaleDateString("es-ES");
 
@@ -148,13 +145,15 @@ function AddReceipt({ refreshData }) {
             <DialogClose asChild>
               <Button type="button" variant="secondary">Cerrar</Button>
             </DialogClose>
-            <Button
-              onClick={handleUpload}
-              disabled={!(selectedFile && receiptName && budgetId && amount)}
-              className="mt-3 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
-            >
-              Subir
-            </Button>
+            <DialogClose asChild>
+              <Button
+                onClick={handleUpload}
+                disabled={!(selectedFile && receiptName && budgetId && amount)}
+                className="mt-3 w-full bg-[#8B17FF] text-white hover:bg-[#FFC217]"
+              >
+                Subir
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
