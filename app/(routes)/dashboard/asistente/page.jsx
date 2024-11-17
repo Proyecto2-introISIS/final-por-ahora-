@@ -119,7 +119,7 @@ function VoiceExpenseAssistant({ refreshData }) {
 
           {/* Imagen */}
           <Image
-            src="/cdd.png" // Asegúrate de tener esta imagen en la ruta correcta
+            src="/cdd.png" 
             alt="Imagen del asistente de voz"
             width={1000}
             height={700}
