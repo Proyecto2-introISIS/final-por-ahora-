@@ -1,18 +1,19 @@
-"use client"
+"use client"; 
 import React, { useEffect, useState } from "react";
 import speech, { useSpeechRecognition } from "react-speech-recognition";
-import { db } from "@/utils/dbConfig"; // Configuración de Drizzle
-import { Expenses, Budgets } from "@/utils/schema"; // Esquema de las tablas
+import { db } from "@/utils/dbConfig"; 
+import { Expenses, Budgets } from "@/utils/schema"; 
 import moment from "moment";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { eq } from "drizzle-orm"; 
 
-function VoiceExpenseAssistant({ refreshData }) {
+function VoiceExpenseAssistant({ refreshData = () => {} }) { 
   const [isClient, setIsClient] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  // Para manejar el estado de la transcripción y la escucha
+  
   const { listening, transcript, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
   useEffect(() => {
@@ -22,7 +23,7 @@ function VoiceExpenseAssistant({ refreshData }) {
   const processCommand = async () => {
     setProcessing(true);
 
-    // Expresión regular para extraer el monto, nombre del gasto y nombre del presupuesto
+    
     const regex = /añade un gasto de ([\d\s,]+) con el nombre (.+) a (.+)/i;
     const match = transcript.match(regex);
 
@@ -35,9 +36,9 @@ function VoiceExpenseAssistant({ refreshData }) {
     const [, amountRaw, expenseName, budgetName] = match;
     const parsedAmount = parseInt(amountRaw.replace(/\s|,/g, "")); // Limpiar el monto
 
-    console.log("Cantidad extraída:", parsedAmount); // Debug: Imprimir la cantidad extraída
-    console.log("Nombre del gasto:", expenseName); // Debug: Imprimir el nombre del gasto
-    console.log("Nombre del presupuesto:", budgetName); // Debug: Imprimir el nombre del presupuesto
+    console.log("Cantidad extraída:", parsedAmount); 
+    console.log("Nombre del gasto:", expenseName); 
+    console.log("Nombre del presupuesto:", budgetName); 
 
     if (isNaN(parsedAmount)) {
       toast.error("No pude entender la cantidad. Intenta de nuevo.");
@@ -46,36 +47,37 @@ function VoiceExpenseAssistant({ refreshData }) {
     }
 
     try {
-      // Normalizar el nombre del presupuesto (en minúsculas)
-      const normalizedBudgetName = budgetName.trim().toLowerCase();
-      console.log("Presupuesto normalizado:", normalizedBudgetName); // Debug: Ver el presupuesto normalizado
+      
+      const capitalizedBudgetName = budgetName.trim().charAt(0).toUpperCase() + budgetName.trim().slice(1);
+      console.log("Presupuesto capitalizado:", capitalizedBudgetName); 
 
-      // Buscar el presupuesto en la base de datos
-      const budget = await db.query.budgets.findFirst({
-        where: {
-          name: normalizedBudgetName, // Buscar presupuesto por nombre exacto
-        },
-      });
+      
+      const budgetResult = await db
+        .select()
+        .from(Budgets)
+        .where(eq(Budgets.name, capitalizedBudgetName));
 
-      if (!budget) {
+      if (!budgetResult || budgetResult.length === 0) {
         toast.error(`No encontré el presupuesto "${budgetName}".`);
         setProcessing(false);
         return;
       }
 
-      console.log("Presupuesto encontrado:", budget); // Debug: Imprimir el presupuesto encontrado
-
-      // Insertar el nuevo gasto con la misma lógica del ejemplo
-      const result = await db.insert(Expenses).values({
-        name: expenseName, // Nombre del gasto
-        amount: parsedAmount, // Monto del gasto
-        budgetId: budget.id, // ID del presupuesto encontrado
-        createdAt: moment().format("YYYY-MM-DD"), // Fecha actual
-      });
+      const budget = budgetResult[0];
+      console.log("Presupuesto encontrado:", budget); 
+      
+      const result = await db
+        .insert(Expenses)
+        .values({
+          name: expenseName, 
+          amount: parsedAmount, 
+          budgetId: budget.id, 
+          createdAt: moment().format("YYYY-MM-DD"), 
+        });
 
       if (result) {
         toast.success("Gasto añadido con éxito.");
-        refreshData(); // Actualizar los datos después de añadir el gasto
+        refreshData(); 
       } else {
         toast.error("Ocurrió un error al añadir el gasto.");
       }
@@ -87,18 +89,18 @@ function VoiceExpenseAssistant({ refreshData }) {
     setProcessing(false);
   };
 
-  // Manejar el inicio de escucha
+  
   const handleStartListening = () => {
-    resetTranscript(); // Resetear la transcripción antes de iniciar
+    resetTranscript(); 
     speech.startListening({ language: "es-CO" });
   };
 
-  // Manejar el detener la escucha
+  
   const handleStopListening = () => {
-    speech.stopListening(); // Detener escucha
+    speech.stopListening(); 
   };
 
-  if (!isClient) return null; // Evita el renderizado en SSR
+  if (!isClient) return null; 
   if (!browserSupportsSpeechRecognition) {
     return <span>Tu navegador no soporta el reconocimiento de voz.</span>;
   }
@@ -117,7 +119,7 @@ function VoiceExpenseAssistant({ refreshData }) {
             Usa el comando: "Añade un gasto de [cantidad] con el nombre [nombre] a [presupuesto]".
           </p>
 
-          {/* Imagen */}
+          
           <Image
             src="/cdd.png" 
             alt="Imagen del asistente de voz"
@@ -129,7 +131,7 @@ function VoiceExpenseAssistant({ refreshData }) {
           <div className="mt-8 flex flex-col items-center gap-4">
             <p>{listening ? "Estoy escuchando 🦻" : "Haz clic en el botón y dime qué hacer"}</p>
 
-            {/* Botón para iniciar la escucha */}
+            
             <Button
               className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring"
               onClick={handleStartListening}
@@ -138,7 +140,7 @@ function VoiceExpenseAssistant({ refreshData }) {
               🎤 {processing ? "Procesando..." : "¿En qué te puedo ayudar?"}
             </Button>
 
-            {/* Botón para detener la escucha */}
+            
             {listening && (
               <Button
                 className="mt-2 bg-red-500 text-white px-6 py-2 rounded"
@@ -148,7 +150,7 @@ function VoiceExpenseAssistant({ refreshData }) {
               </Button>
             )}
 
-            {/* Mostrar transcripción */}
+            
             {transcript && (
               <div className="mt-4 p-2 border rounded">
                 <p>Transcripción: {transcript}</p>
